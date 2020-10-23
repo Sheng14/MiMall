@@ -6,7 +6,7 @@
 </template>
 
 <script>
-// import axios from 'axios'
+ import axios from 'axios'
 // import jsonp from 'jsonp'
 export default {
   name: 'App',
@@ -15,7 +15,7 @@ export default {
   },
   data () {
     return {
-      age: 30
+      res: ''
     }
   },
  /* mounted () {
@@ -26,7 +26,17 @@ export default {
   }*/
   
   mounted () {
-  
+    // 通过本地json的方式加载mock数据（注意这种方式会导致Cannot read property 'protocol' of undefined的错误，而且好像不能用this，不过可以请求）
+   /* axios.get('/mock/user/login.json').then((res) => {
+     this.res = res
+     console.log(res)
+    })*/
+
+    // 通过mockjs的方式加载mock数据
+    axios.get('/user/login').then((res) => {
+     this.res = res
+     console.log(res)
+    })
   // let url = 'https://www.easy-mock.com/mock/5b012c1fe6e1035843cd3aff/mockapi/table/list'
   // let url1 = '/api/learningpath/relatedpath'
     // 真实路径：https://coding.imooc.com/learningpath/relatedpath 转发路径： http://localhost:8080/api/learningpath/relatedpath
