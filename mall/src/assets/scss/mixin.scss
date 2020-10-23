@@ -1,0 +1,14 @@
+// 抽离复用flex
+@mixin flex ($hov: space-between, $col: center) {
+    display: flex;
+    justify-content: $hov;
+    align-items: center;
+}
+// 抽离复用背景图片
+@mixin  bgImg ($w, $h, $img: '', $size: contain) {
+    display: inline-block;
+    width: $w;
+    height: $h;
+    background: url($img);
+    background-size: $size;
+}
