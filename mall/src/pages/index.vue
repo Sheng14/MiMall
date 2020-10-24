@@ -2,6 +2,42 @@
     <div class="index">
         <div class="container">
             <div class="swiper-box">
+                <div class="nav-menu">
+                    <ul class="menu-wrapper">
+                        <li class="menu-item">
+                            <a href="javascript:;">手机 电话卡</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">电视 盒子</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">笔记本 平板</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">家电 插线板</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">出行 穿戴</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">智能 路由器</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">电源 配件</a>
+                            <div class="children"></div>
+                        </li>
+                        <li class="menu-item">
+                            <a href="javascript:;">生活 箱包</a>
+                            <div class="children"></div>
+                        </li>
+                    </ul>
+                </div>
                 <swiper v-bind:options="swiperOption">
                     <swiper-slide v-for="(item, index) in slideList" :key="index">
                         <a :href="'/#/product'+item.id"><img :src="item.img"></a>
@@ -64,7 +100,7 @@ export default {
             },
             {
                 id:'',
-                img:'/imgs/slider/slide-1.jpg'
+                img:'/imgs/slider/slide-5.jpg'
             }
             ]
         }
@@ -77,10 +113,47 @@ export default {
 }
 </script>
 <style lang="scss">
+  @import './../assets/scss/config.scss';
+  @import './../assets/scss/mixin.scss';
     .index {
         .swiper-box {
+            .nav-menu {
+                position: absolute;
+                width: 264px;
+                height: 451px;
+                padding: 26px 0;
+                box-sizing: border-box;
+                background-color: #55585a7a;
+                z-index: 2;
+                .menu-wrapper {
+                    .menu-item {
+                        height: 50px;
+                        line-height: 50px;
+                        a {
+                            color: #ffffff;
+                            font-size: 16px;
+                            padding-left: 30px;
+                            display: block;
+                            position: relative;
+                            &:after {
+                                position: absolute;
+                                right: 30px;
+                                top: 17.5px;
+                                content: ' ';
+                                @include bgImg(10px, 15px, '/imgs/icon-arrow.png')
+                            }
+                        }
+                        &:hover {
+                            background-color: $colorA;
+                        }
+                    }
+                }
+            }
             .swiper-container {
                 height: 451px;
+                .swiper-button-prev {
+                    left: 267px;
+                }
                 img {
                     height: 100%;
                     width: 100%;
