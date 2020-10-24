@@ -11,8 +11,8 @@ if (mock) {
 }
 
 // axios的默认配置，需要根据前端的跨域方式进行调整
-axios.defaults.baseURL = '/api'
-axios.defaults.timeout = 8000
+ axios.defaults.baseURL = '/api'
+ axios.defaults.timeout = 8000
 
 // 根据环境变量的不同获取不同的请求地址
 // axios.defaults.baseURL = env.baseURL

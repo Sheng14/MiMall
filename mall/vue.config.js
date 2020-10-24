@@ -4,10 +4,10 @@ module.exports = {
         port: 8080,
         proxy: {
             '/api': {
-                target: 'https://coding.imooc.com',
+                target: 'http://mi.futurefe.com',
                 changeOrigin: true,
                 pathRewrite: {
-                    '/api': ''
+                    '/api': '/api'
                 }
             }
         }
