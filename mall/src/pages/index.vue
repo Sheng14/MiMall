@@ -71,14 +71,14 @@
                     <div class="list-box">
                         <div class="list" v-for="(arr, index) in phoneList" :key="index">
                             <div class="item" v-for="(item, index) in arr" :key="index">
-                                <span>新品</span>
+                                <span :class="{'new-pro':index%2===0}">新品</span>
                                 <div class="item-img">
-                                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/9aab8a7fa9005ef918c9aa2d5f17c806.jpg" alt="">
+                                    <img :src="item.mainImage" alt="">
                                 </div>
                                 <div class="item-info">
-                                    <h3>小米9</h3>
-                                    <p>骁龙855</p>
-                                    <p class="price">2599元</p>
+                                    <h3>{{item.name}}</h3>
+                                    <p>{{item.subTitle}}</p>
+                                    <p class="price">{{item.price}}元</p>
                                 </div>
                             </div>
                         </div>
@@ -93,6 +93,7 @@
 import SearchBar from '../components/SearchBar'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.css'
+import axios from 'axios'
 
 export default {
     name: 'index',
@@ -177,15 +178,29 @@ export default {
                     img:'/imgs/ads/ads-4.jpg'
                 }
             ],
-            phoneList: [
-                [0, 0, 0, 0], [0, 0, 0, 0]
-            ]
+            phoneList: []
         }
     },
     components: {
         SearchBar,
         swiper,
         swiperSlide
+    },
+    mounted () {
+        this.init()
+    },
+    methods: {
+        init () { // 获取手机商品的数据并且拆分成二维数组
+            axios.get('/products',{
+                params: {
+                    categoryId: 100012,
+                    pageSize: 8
+                }
+            }).then ((res) => {
+                console.log(res.list)
+                this.phoneList = [res.list.slice(0, 4), res.list.slice(4, 8)] // 拆分成二维数组
+            })
+        }
     }
 }
 </script>
@@ -305,7 +320,7 @@ export default {
                 .list-box{
                 .list{
                         @include flex();
-                        width:986px;
+                        width:986px; // 须定义宽度才能展开，不然会挤在一起
                         margin-bottom:14px;
                         &:last-child{
                         margin-bottom:0; // 让下面的行无需底部bottom
