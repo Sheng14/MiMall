@@ -60,8 +60,32 @@
                     <img src="/imgs/banner-1.png" alt="">
                 </a>
             </div>
-            <div class="product-box"></div>
         </div>
+            <div class="product-box">
+                <div class="container">
+                    <h2>手机</h2>
+                    <div class="wrapper">
+                    <div class="banner-left">
+                        <a href="/#/product/35"><img src="/imgs/mix-alpha.jpg" alt=""></a>
+                    </div>
+                    <div class="list-box">
+                        <div class="list" v-for="(arr, index) in phoneList" :key="index">
+                            <div class="item" v-for="(item, index) in arr" :key="index">
+                                <span>新品</span>
+                                <div class="item-img">
+                                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/9aab8a7fa9005ef918c9aa2d5f17c806.jpg" alt="">
+                                </div>
+                                <div class="item-info">
+                                    <h3>小米9</h3>
+                                    <p>骁龙855</p>
+                                    <p class="price">2599元</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>                
+            </div>
         <search-bar></search-bar>
     </div>
 </template>
@@ -152,6 +176,9 @@ export default {
                     id:47,
                     img:'/imgs/ads/ads-4.jpg'
                 }
+            ],
+            phoneList: [
+                [0, 0, 0, 0], [0, 0, 0, 0]
             ]
         }
     },
@@ -256,5 +283,87 @@ export default {
         .banner{
             margin-bottom:50px;
         }
+        .product-box{
+            background-color:$colorJ;
+            padding:30px 0 50px;
+            h2{
+                font-size:$fontF;
+                height:21px;
+                line-height:21px;
+                color:$colorB;
+                margin-bottom:20px;
+            }
+            .wrapper{
+                display:flex;
+                .banner-left{
+                    margin-right:16px;
+                    img{
+                        width:224px;
+                        height:619px;
+                    }
+                }
+                .list-box{
+                .list{
+                        @include flex();
+                        width:986px;
+                        margin-bottom:14px;
+                        &:last-child{
+                        margin-bottom:0; // 让下面的行无需底部bottom
+                    }
+                    .item{
+                    width:236px;
+                    height:302px;
+                    background-color:$colorG;
+                    text-align:center;
+                    span{
+                        display:inline-block;
+                        width:67px;
+                        height:24px;
+                        font-size:14px;
+                        line-height:24px;
+                        color:$colorG;
+                        &.new-pro{
+                        background-color:#7ECF68;
+                        }
+                        &.kill-pro{
+                        background-color:#E82626;
+                        }
+                    }
+                    .item-img{
+                        img{
+                        width:100%;
+                        height:195px;
+                        }
+                    }
+                    .item-info{
+                        h3{
+                        font-size:$fontJ;
+                        color:$colorB;
+                        line-height:$fontJ;
+                        font-weight:bold;
+                        }
+                        p{
+                        color:$colorD;
+                        line-height:13px;
+                        margin:6px auto 13px;
+                        }
+                        .price{
+                        color:#F20A0A;
+                        font-size:$fontJ;
+                        font-weight:bold;
+                        cursor:pointer;
+                        &:after{
+                            @include bgImg(22px,22px,'/imgs/icon-cart-hover.png'); // 添加购物车图片
+                            content:' ';
+                            margin-left:5px;
+                            vertical-align: middle;
+                        }
+                        }
+                    }
+                    }
+                }
+                }
+            }
+        }        
     }
 </style>
