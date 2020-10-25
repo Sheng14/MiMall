@@ -6,35 +6,37 @@
                     <ul class="menu-wrapper">
                         <li class="menu-item">
                             <a href="javascript:;">手机 电话卡</a>
-                            <div class="children"></div>
+                            <div class="children">
+                                <ul v-for="(item, index) in menuList" :key="index">
+                                    <li v-for="(sub, index) in item" :key="index">
+                                        <a :href="sub? '/#/product'+sub.id : ''">
+                                            <img :src="sub? sub.img:'/imgs/item-box-1.png'">
+                                            {{sub? sub.name: '假小米'}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">电视 盒子</a>
-                            <div class="children"></div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">笔记本 平板</a>
-                            <div class="children"></div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">家电 插线板</a>
-                            <div class="children"></div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">出行 穿戴</a>
-                            <div class="children"></div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">智能 路由器</a>
-                            <div class="children"></div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">电源 配件</a>
-                            <div class="children"></div>
                         </li>
                         <li class="menu-item">
                             <a href="javascript:;">生活 箱包</a>
-                            <div class="children"></div>
                         </li>
                     </ul>
                 </div>
@@ -102,6 +104,31 @@ export default {
                 id:'',
                 img:'/imgs/slider/slide-5.jpg'
             }
+            ],
+            menuList: [ // 模拟菜单数据
+                [
+                    {
+                        id: 30,
+                        img: '/imgs/item-box-1.png',
+                        name: '小米CC9'
+                    },
+                    {
+                        id:31,
+                        img:'/imgs/item-box-2.png',
+                        name:'小米8青春版',
+                    },
+                    {
+                        id:32,
+                        img:'/imgs/item-box-3.jpg',
+                        name:'Redmi K20 Pro',
+                    },
+                    {
+                        id:33,
+                        img:'/imgs/item-box-4.jpg',
+                        name:'移动4G专区',
+                    }
+                ],
+                [0 , 0, 0, 0], [0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0],[0, 0, 0, 0]
             ]
         }
     },
@@ -133,7 +160,7 @@ export default {
                             color: #ffffff;
                             font-size: 16px;
                             padding-left: 30px;
-                            display: block;
+                            display: block; // 设置这个才能占满一行，我们的定位才会正确
                             position: relative;
                             &:after {
                                 position: absolute;
@@ -145,6 +172,39 @@ export default {
                         }
                         &:hover {
                             background-color: $colorA;
+                            .children {
+                                display: block; // 显示子菜单
+                            }
+                            transition: all .5s;
+                        }
+                        .children {
+                            display: none; // 默认不展示子菜单
+                            width: 962px;
+                            height: 451px;
+                            background-color: #ffffff;
+                            top: 0;
+                            left: 264px;
+                            position: absolute;
+                            ul {
+                                display: flex;
+                                justify-content: space-between;
+                                height: 75px; // 定义每一行对齐
+                                li {
+                                    height: 75px;
+                                    flex: 1;
+                                    padding-left: 27px; // 定义每一个占据的宽高
+                                    a {
+                                        color: $colorB;
+                                        font-size: 14px;
+                                    }
+                                    img {
+                                        width: 42px;
+                                        height: 35px;
+                                        vertical-align: middle;
+                                        margin-right: 15px;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -152,7 +212,7 @@ export default {
             .swiper-container {
                 height: 451px;
                 .swiper-button-prev {
-                    left: 267px;
+                    left: 267px; // 移动左箭头
                 }
                 img {
                     height: 100%;
