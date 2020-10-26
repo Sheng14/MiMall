@@ -19,3 +19,13 @@
     width:$w;
     height:$h;
 }
+// 抽离复用框框中的icon
+@mixin positionImg($pos:absolute,$top:0,$right:0,$w:0,$h:0,$img:''){
+    position:$pos;
+    top:$top;
+    right:$right;
+    width:$w;
+    height:$h;
+    background:url($img) no-repeat center;
+    background-size:contain;
+  }

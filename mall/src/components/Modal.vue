@@ -9,7 +9,7 @@
             <div class="modal-body">
                 <slot name="body"></slot>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer btn-group">
                 <a href="javascript:;" class="btn">确定</a>
                 <a href="javascript:;" class="btn">取消</a>
             </div>
