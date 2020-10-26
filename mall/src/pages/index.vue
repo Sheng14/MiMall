@@ -87,11 +87,23 @@
                 </div>                
             </div>
         <search-bar></search-bar>
+        <modal
+            modelType="middle" 
+            title="提示"
+            btnType= "1"
+            sureText= "查看购物车详情"
+            v-bind:showModal="true"
+        >
+            <template v-slot:body>
+                <p>商品添加成功！</p>
+            </template>
+        </modal>
     </div>
 </template>
 <script>
 import SearchBar from '../components/SearchBar'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import Modal from '../components/Modal'
 import 'swiper/swiper-bundle.css'
 import axios from 'axios'
 
@@ -184,7 +196,8 @@ export default {
     components: {
         SearchBar,
         swiper,
-        swiperSlide
+        swiperSlide,
+        Modal
     },
     mounted () {
         this.init()
@@ -194,9 +207,10 @@ export default {
             axios.get('/products',{
                 params: {
                     categoryId: 100012,
-                    pageSize: 8
+                    pageSize: 14
                 }
             }).then ((res) => {
+                res.list = res.list.slice(6, 14) // 因为前面的6个数据是给导航栏用的，在这里用会显得比较大，所以用后面的数据
                 console.log(res.list)
                 this.phoneList = [res.list.slice(0, 4), res.list.slice(4, 8)] // 拆分成二维数组
             })
