@@ -7,13 +7,13 @@
         background-color: $colorI;
         opacity: 0.5;
     }
-    &.slide-enter-active {
+    &.slide-enter-active { // 进去之后肯定就是看得见的即0啊
       top: 0;
     }
-    &.slide-leave-active {
+    &.slide-leave-active { // 离开的之后肯定是看不见的即-100%，离开时还是看得见的0，不过默认就是0无需再设置了
       top: -100%;
     }
-    &.slide-enter {
+    &.slide-enter { // 刚开始进去的时候肯定是从看不见即-100%开始啊
       top: -100%;
     }
     .modal-dialog {
