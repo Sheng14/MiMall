@@ -22,10 +22,13 @@ if (mock) {
 // 接口错误拦截
 axios.interceptors.response.use(function(response){
   let res = response.data
+  let path = location.hash // 获取当前的哈希路由
   if(res.status == 0) { // 成功状态
     return res.data
   } else if (res.status === 10) { // 未登录状态
-    window.location.href = '/#/login'
+    if (path !== "#/index") { // 如果是首页出现10错误就无需强制跳转到登录页，游客有权限查看首页
+      window.location.href = '/#/login'
+    }
   } else { // 错误状态
     alert(res.msg)
     return Promise.reject(res) // 抛出错误，不然会走我们后面成功的方法

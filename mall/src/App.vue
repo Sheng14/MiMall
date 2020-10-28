@@ -5,7 +5,7 @@
 </template>
 
 <script>
-// import axios from 'axios'
+ import axios from 'axios'
 // import jsonp from 'jsonp'
 export default {
   name: 'App',
@@ -17,8 +17,21 @@ export default {
       
     }
   },
-  
   mounted () {
+    this.getUser()
+    this.getCartCount()
+  },
+  methods: {
+    getUser () {
+      axios.get('/user').then((res) => {
+        console.log(res)
+      })
+    },
+    getCartCount () {
+      axios.get('/carts/products/sum').then((res) => {
+        console.log(res)
+      })
+    }
   }
 }
 </script>

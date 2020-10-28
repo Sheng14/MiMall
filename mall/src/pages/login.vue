@@ -49,6 +49,8 @@ export default {
     methods: {
         login () {
             let { username, password } = this
+            console.log(username)
+            console.log(password)
             axios.post('/user/login', {
                 username,
                 password
@@ -62,9 +64,9 @@ export default {
         },
         register () {
             axios.post('/user/register', {
-                username: 'Diguo123',
-                password: 'Diguo123',
-                email: "Diguo123@163.com"
+                username: 'Diguo12',
+                password: 'Diguo12',
+                email: "Diguo12@163.com"
             })
             .then((res) => {
                 console.log(res)
