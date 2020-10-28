@@ -78,7 +78,7 @@
                                 <div class="item-info">
                                     <h3>{{item.name}}</h3>
                                     <p>{{item.subTitle}}</p>
-                                    <p class="price">{{item.price}}元</p>
+                                    <p class="price" @click="addCart(item.id)">{{item.price}}元</p>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +92,9 @@
             title="提示"
             btnType= "1"
             sureText= "查看购物车详情"
-            v-bind:showModal="true"
+            v-bind:showModal="showModal"
+            v-on:submit="goToCart"
+            v-on:cancel="showModal=false"
         >
             <template v-slot:body>
                 <p>商品添加成功！</p>
@@ -190,7 +192,8 @@ export default {
                     img:'/imgs/ads/ads-4.jpg'
                 }
             ],
-            phoneList: []
+            phoneList: [],
+            showModal: false // 控制框框显示与否
         }
     },
     components: {
@@ -214,6 +217,20 @@ export default {
                 console.log(res.list)
                 this.phoneList = [res.list.slice(0, 4), res.list.slice(4, 8)] // 拆分成二维数组
             })
+        },
+        goToCart () {
+            this.$router.push('/cart')
+        },
+        addCart (id) { // 添加到购物车
+            console.log(id)
+            this.showModal = true
+           /* axios.post('/carts', {
+                productId: id,
+                selected: true
+            })
+            .then((res) => {
+                console.log(res)
+            })*/
         }
     }
 }
