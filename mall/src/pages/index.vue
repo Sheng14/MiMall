@@ -42,7 +42,7 @@
                 </div>
                 <swiper v-bind:options="swiperOption">
                     <swiper-slide v-for="(item, index) in slideList" :key="index">
-                        <a :href="'/#/product'+item.id"><img :src="item.img"></a>
+                        <a :href="'/#/product'+item.id"><img v-lazy="item.img"></a>
                     </swiper-slide>
                     <!-- Optional controls -->
                     <div class="swiper-pagination"  slot="pagination"></div>
@@ -52,12 +52,12 @@
             </div>
             <div class="ads-box">
                 <a :href="'/#/product'+item.id" v-for="(item, index) in adsList" :key="index">
-                    <img :src="item.img">
+                    <img v-lazy="item.img">
                 </a>
             </div>
             <div class="banner">
                 <a href="/#/product/30">
-                    <img src="/imgs/banner-1.png" alt="">
+                    <img v-lazy="'/imgs/banner-1.png'" alt="">
                 </a>
             </div>
         </div>
@@ -73,7 +73,7 @@
                             <div class="item" v-for="(item, index) in arr" :key="index">
                                 <span :class="{'new-pro':index%2===0}">新品</span>
                                 <div class="item-img">
-                                    <img :src="item.mainImage" alt="">
+                                    <img v-lazy="item.mainImage" alt="">
                                 </div>
                                 <div class="item-info">
                                     <h3>{{item.name}}</h3>
