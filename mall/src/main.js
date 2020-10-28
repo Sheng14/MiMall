@@ -3,6 +3,7 @@ import App from './App.vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueLazyLoad from 'vue-lazyload'
+import VueCookie from 'vue-cookie'
 import router from './router'
 // import env from './env'
 
@@ -27,10 +28,12 @@ axios.interceptors.response.use(function(response){
     window.location.href = '/#/login'
   } else { // 错误状态
     alert(res.msg)
+    return Promise.reject(res) // 抛出错误，不然会走我们后面成功的方法
   }
 })
 
 Vue.use(axios, VueAxios)
+Vue.use(VueCookie)
 Vue.use(VueLazyLoad, {
   loading: '/imgs/loading-svg/loading-bars.svg'
 })
