@@ -5,9 +5,10 @@ import VueAxios from 'vue-axios'
 import VueLazyLoad from 'vue-lazyload'
 import VueCookie from 'vue-cookie'
 import router from './router'
+import store from './store' // 引入vuex的状态管理实例
 // import env from './env'
 
-const mock = true // 定义mock是否开启的开关
+const mock = false // 定义mock是否开启的开关
 if (mock) {
   require('./mock/api')
 }
@@ -43,6 +44,7 @@ Vue.use(VueLazyLoad, {
 Vue.config.productionTip = false
 
 new Vue({
+  store, // 挂载到vue实例上
   router,
   render: h => h(App),
 }).$mount('#app')
