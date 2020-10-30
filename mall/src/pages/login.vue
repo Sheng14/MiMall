@@ -37,6 +37,7 @@
 </template>
 <script>
 import axios from 'axios'
+import { mapActions } from 'vuex'
 export default {
     name: 'login',
     data () {
@@ -56,12 +57,14 @@ export default {
                 password
             })
             .then((res) => {
-                console.log(res)
+              //  this.$store.dispatch('saveUsername', res.username)
+                this.saveUsername(res.username) // 两者都是派发事件
                 this.$cookie.set('userId', res.id, { expires: '1M' })
                 this.userId = res.id
                 this.$router.push('/index')
             })
         },
+        ...mapActions(['saveUsername']),
         register () {
             axios.post('/user/register', {
                 username: 'Diguo12',

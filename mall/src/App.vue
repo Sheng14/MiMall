@@ -21,15 +21,15 @@ export default {
     this.getUser()
     this.getCartCount()
   },
-  methods: {
+  methods: { // 这里再派发一次事件，避免刷新后数据丢失
     getUser () {
       axios.get('/user').then((res) => {
-        console.log(res)
+        this.$store.dispatch('saveUsername', res.username)
       })
     },
     getCartCount () {
       axios.get('/carts/products/sum').then((res) => {
-        console.log(res)
+        this.$store.dispatch('saveCartCount', res)
       })
     }
   }

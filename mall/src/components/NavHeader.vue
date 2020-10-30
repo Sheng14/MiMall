@@ -12,7 +12,7 @@
                     <a href="javascript:;" v-if="username">{{username}}</a>
                     <a href="javascript:;" v-if="!username" @click="login">登录</a>
                     <a href="javascript:;" v-if="username">我的订单</a>
-                    <a href="javascript:;" class="my-cart" @click="goToCart"><span class="icon-cart"></span>购物车</a>
+                    <a href="javascript:;" class="my-cart" @click="goToCart"><span class="icon-cart"></span>购物车({{cartCount}})</a>
                 </div>
             </div>
         </div>
@@ -114,13 +114,22 @@
     </div></template>
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
 export default {
     name: 'nav-header',
     data () {
         return {
-            username: 'jack',
             phoneList: [] // 储存手机列表
         }
+    },
+    computed: { // 避免因为接口请求比组件渲染慢导致的数据更新没好就直接渲染出来（undefined），所以在计算属性，一有改变就重新赋值
+       /* username() {
+            return this.$store.state.username
+        },
+        cartCount() {
+            return this.$store.state.cartCount
+        }*/
+        ...mapState(['username', 'cartCount'])
     },
     filters: { // 过滤器
         currency (val) {
