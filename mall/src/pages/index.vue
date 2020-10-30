@@ -42,7 +42,7 @@
                 </div>
                 <swiper v-bind:options="swiperOption">
                     <swiper-slide v-for="(item, index) in slideList" :key="index">
-                        <a :href="'/#/product'+item.id"><img v-lazy="item.img"></a>
+                        <a :href="'/#/product/'+item.id"><img v-lazy="item.img"></a>
                     </swiper-slide>
                     <!-- Optional controls -->
                     <div class="swiper-pagination"  slot="pagination"></div>
@@ -51,7 +51,7 @@
                 </swiper>
             </div>
             <div class="ads-box">
-                <a :href="'/#/product'+item.id" v-for="(item, index) in adsList" :key="index">
+                <a :href="'/#/product/'+item.id" v-for="(item, index) in adsList" :key="index">
                     <img v-lazy="item.img">
                 </a>
             </div>
