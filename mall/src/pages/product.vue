@@ -39,11 +39,11 @@
       <div class="item-video">
         <h2>60帧超慢动作摄影<br/>慢慢回味每一瞬间的精彩</h2>
         <p>后置960帧电影般超慢动作视频，将眨眼间的美妙展现得淋漓尽致！<br/>更能AI 精准分析视频内容，15个场景智能匹配背景音效。</p>
-        <div class="video-bg" @click="showSlide = true"></div>
+        <div class="video-bg" @click="showSlide = 'slideDown'"></div>
         <div class="video-box">
-          <div class="overlay" v-if="showSlide"></div>
-          <div class="video" :class="{'slide': showSlide}">
-            <span class="icon-close" @click="showSlide = false"></span>
+          <div class="overlay" v-if="showSlide == 'slideDown'"></div>
+          <div class="video" :class="showSlide">
+            <span class="icon-close" @click="showSlide = 'slideUp'"></span>
             <video src="/imgs/product/video.mp4" muted autoplay controls="controls"></video>
           </div>
         </div>
@@ -58,7 +58,7 @@ export default {
     name: 'product',
     data () {
         return {
-            showSlide: false, // 展示滑动效果与否
+            showSlide: '', // 展示什么样的滑动效果（上或者下）
             swiperOption:{
             autoplay:true,
             slidesPerView:3,
@@ -165,6 +165,24 @@ export default {
             opacity:.4;
             z-index:10; // 不让其下面的元素浮上来
           }
+          @keyframes slideDown { // 定义下滑动画
+            from {
+              top: -50%;
+              opacity: 0;
+            } to {
+              top: 50%;
+              opacity: 1;
+            }
+          }
+          @keyframes slideUp { // 定义上移动画
+            from {
+              top: 50%;
+              opacity: 1;
+            } to {
+              top: -50%;
+              opacity: 0;
+            }
+          }
           .video { // 视频容器
               position: fixed;
               top: -50%; // 默认一开始先藏起来
@@ -174,10 +192,13 @@ export default {
               height: 536px;
               z-index: 10;
               opacity: 0;
-              transition: all .3s;
-              &.slide {
-                  top: 50%;
-                  opacity: 1;
+              &.slideDown { // 使用动画且规定最后的样式！（不然就会闪现然后又变成最开始的样式）
+                animation: slideDown .6s linear;
+                top: 50%;
+                opacity: 1;
+              }
+              &.slideUp { // 这里无需改变最后的样式，因为最后的样式就是最开始的样式
+                animation: slideUp .6s linear;
               }
               .icon-close{ // 关闭图标
                     position:absolute;
