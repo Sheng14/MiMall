@@ -23,12 +23,12 @@ export default {
   },
   methods: { // 这里再派发一次事件，避免刷新后数据丢失
     getUser () {
-      axios.get('/user').then((res) => {
+      axios.get('/user').then((res = {}) => { // 加了默认值{}
         this.$store.dispatch('saveUsername', res.username)
       })
     },
     getCartCount () {
-      axios.get('/carts/products/sum').then((res) => {
+      axios.get('/carts/products/sum').then((res = 0) => { // 加了默认值0
         this.$store.dispatch('saveCartCount', res)
       })
     }
