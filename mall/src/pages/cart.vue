@@ -9,7 +9,7 @@
             <div class="container">
                 <div class="cart-box">
                 <ul class="cart-item-head">
-                    <li class="col-1"><span class="checkbox" v-bind:class="{'checked':allChecked}"></span>全选</li>
+                    <li class="col-1"><span class="checkbox" v-bind:class="{'checked':allChecked}" @click="toggleAll"></span>全选</li>
                     <li class="col-3">商品名称</li>
                     <li class="col-1">单价</li>
                     <li class="col-2">数量</li>
@@ -80,14 +80,20 @@ export default {
     methods: {
         getCartList () {
             axios.get('/carts').then((res) => {
+                this.renderData(res)
+            })
+        },
+        toggleAll () {
+            let url = this.allChecked? '/carts/unSelectAll': '/carts/selectAll' // 确定是全选还是全不选
+            axios.put(url).then((res) => {
+                this.renderData(res) // 依然要全部数据重新渲染一遍,不然就只能切换一半什么的
+            })
+        },
+        renderData (res) { // 渲染购物车数据的公共方法
                 this.list = res.cartProductVoList || []
                 this.cartTotalPrice = res.cartTotalPrice
                 this.allChecked = res.selectedAll
-                /*this.checkedNum = this.list.filter((item) => {
-                    return item.productSelected
-                }).length*/
                 this.checkedNum = this.list.filter(item => item.productSelected).length // 过滤拿到只有选中商品的数组的长度
-            })
         }
     }
 }
