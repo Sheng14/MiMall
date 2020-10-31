@@ -1,7 +1,10 @@
 <template>
     <div>
-        <order-header></order-header>
-        <div>cart</div>
+        <order-header title="购物车页面">
+            <template v-slot:tip>
+                <span>温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</span>
+            </template>
+        </order-header>
         <nav-footer></nav-footer>
     </div>
 </template>
