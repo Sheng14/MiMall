@@ -19,7 +19,7 @@
                 <ul class="cart-item-list">
                     <li class="cart-item" v-for="(item,index) in list" v-bind:key="index">
                     <div class="item-check">
-                        <span class="checkbox" v-bind:class="{'checked':item.productSelected}"></span>
+                        <span class="checkbox" v-bind:class="{'checked':item.productSelected}" @click="updateCart(item)"></span>
                     </div>
                     <div class="item-name">
                         <img v-lazy="item.productMainImage" alt="">
@@ -28,13 +28,13 @@
                     <div class="item-price">{{item.productPrice}}</div>
                     <div class="item-num">
                         <div class="num-box">
-                        <a href="javascript:;">-</a>
+                        <a href="javascript:;" @click="updateCart(item, '-')">-</a>
                         <span>{{item.quantity}}</span>
-                        <a href="javascript:;">+</a>
+                        <a href="javascript:;" @click="updateCart(item, '+')">+</a>
                         </div>
                     </div>
                     <div class="item-total">{{item.productTotalPrice}}</div>
-                    <div class="item-del"></div>
+                    <div class="item-del" @click="delProduct(item)"></div>
                     </li>
                 </ul>
                 </div>
@@ -78,15 +78,45 @@ export default {
         this.getCartList()
     },
     methods: {
-        getCartList () {
+        getCartList () { // 获取购物车列表
             axios.get('/carts').then((res) => {
                 this.renderData(res)
             })
         },
-        toggleAll () {
+        toggleAll () { // 全选或者取消全选
             let url = this.allChecked? '/carts/unSelectAll': '/carts/selectAll' // 确定是全选还是全不选
             axios.put(url).then((res) => {
                 this.renderData(res) // 依然要全部数据重新渲染一遍,不然就只能切换一半什么的
+            })
+        },
+        updateCart (item, type) { // 更新商品数量和选中状态
+            let quantity = item.quantity // 获取商品的当前数量
+            let selected = item.productSelected // 获取商品当前的选中状态
+            if (type === '-') {
+                if (quantity === 1) {
+                    alert('商品数量至少为1')
+                    return
+                }
+                --quantity // 记得--在前，不然要下次计算才会更新数据
+            } else if (type === '+') {
+                if (quantity > item.productStock) {
+                    alert('购买的商品不能超过库存数量')
+                    return
+                }
+                ++quantity
+            } else {
+                selected = !item.productSelected // 选中状态就是对当前选中状态取反就行
+            }
+            axios.put(`/carts/${item.productId}`, { // 最后发送商品数量与选中状态给后端计算拿到数据重新渲染
+                quantity,
+                selected
+            }).then((res) => {
+                this.renderData(res)
+            })
+        },
+        delProduct (item) { // 删除商品的方法
+            axios.delete(`/carts/${item.productId}`).then((res) => {
+                this.renderData(res)
             })
         },
         renderData (res) { // 渲染购物车数据的公共方法
