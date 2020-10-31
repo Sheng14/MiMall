@@ -30,6 +30,7 @@ axios.interceptors.response.use(function(response){
     if (path !== "#/index") { // 如果是首页出现10错误就无需强制跳转到登录页，游客有权限查看首页
       window.location.href = '/#/login'
     }
+    return Promise.reject(res) // 抛出错误，不然也会走成功逻辑（就是进入购物车页再是登录页）
   } else { // 错误状态
     alert(res.msg)
     return Promise.reject(res) // 抛出错误，不然会走我们后面成功的方法

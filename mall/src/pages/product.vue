@@ -85,7 +85,7 @@ export default {
       },
       buy () { // 跳转到对应商品的details页
         let id = this.$route.params.id
-        this.$router.push(`/details/${id}`)
+        this.$router.push(`/detail/${id}`)
       },
       closeVideo () { // 显示动画且关闭视频
         this.showSlide = 'slideUp'

@@ -222,15 +222,14 @@ export default {
             this.$router.push('/cart')
         },
         addCart (id) { // 添加到购物车
-            console.log(id)
-            this.showModal = true
-           /* axios.post('/carts', {
+            axios.post('/carts', {
                 productId: id,
                 selected: true
             })
             .then((res) => {
-                console.log(res)
-            })*/
+                this.$store.dispatch('saveCartCount',res.cartTotalQuantity); // 更新vuex中的商品数量
+                this.showModal = true
+            })
         }
     }
 }

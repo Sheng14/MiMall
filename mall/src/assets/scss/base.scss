@@ -15,3 +15,16 @@ input{
     box-sizing: border-box;
     font-size: 14px;
 }
+.fr {
+    float: right;
+}
+.fl {
+    float: left;
+}
+.clearfix:before, .clearfix:after { // 加上伪类方便清除浮动
+    content: ' ';
+    display: table;
+}
+.clearfix:after { // 清除浮动
+    clear: both;
+}
