@@ -59,6 +59,7 @@ import OrderHeader from '../components/OrderHeader'
 import NavFooter from '../components/NavFooter'
 import ServiceBar from './../components/SearchBar'
 import axios from 'axios'
+import { Message } from 'element-ui'
 export default {
     name: 'cart',
     components: {
@@ -94,13 +95,13 @@ export default {
             let selected = item.productSelected // 获取商品当前的选中状态
             if (type === '-') {
                 if (quantity === 1) {
-                    alert('商品数量至少为1')
+                    Message.warning('商品数量至少为1')
                     return
                 }
                 --quantity // 记得--在前，不然要下次计算才会更新数据
             } else if (type === '+') {
                 if (quantity > item.productStock) {
-                    alert('购买的商品不能超过库存数量')
+                    Message.warning('购买的商品不能超过库存数量')
                     return
                 }
                 ++quantity
@@ -118,11 +119,12 @@ export default {
             axios.delete(`/carts/${item.productId}`).then((res) => {
                 this.renderData(res)
             })
+            this.$message.success('删除成功') // 直接使用
         },
         order () { // 下单
             let isCheck = this.list.every(item => !item.productSelected) // 判断商品列表是否都是未选中的状态
             if (isCheck) {
-                alert('请至少选择一件商品')
+                Message.warning('请至少选择一件商品') //引入使用
             }else {
                 this.$router.push('/order/confirm')
             }

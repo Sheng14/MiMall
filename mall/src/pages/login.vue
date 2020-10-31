@@ -73,7 +73,7 @@ export default {
             })
             .then((res) => {
                 console.log(res)
-                alert("注册成功")
+                this.$message.success("注册成功")
             })
         }
     }

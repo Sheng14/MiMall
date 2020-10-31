@@ -6,6 +6,9 @@ import VueLazyLoad from 'vue-lazyload'
 import VueCookie from 'vue-cookie'
 import router from './router'
 import store from './store' // 引入vuex的状态管理实例
+import { Message } from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css' // 引入ui框架中的组件/插件以及对应的css即可在各文件引入使用
+
 // import env from './env'
 
 const mock = false // 定义mock是否开启的开关
@@ -32,7 +35,7 @@ axios.interceptors.response.use(function(response){
     }
     return Promise.reject(res) // 抛出错误，不然也会走成功逻辑（就是进入购物车页再是登录页）
   } else { // 错误状态
-    alert(res.msg)
+    Message.error(res.msg) // 引入使用方式
     return Promise.reject(res) // 抛出错误，不然会走我们后面成功的方法
   }
 })
@@ -43,6 +46,7 @@ Vue.use(VueLazyLoad, {
   loading: '/imgs/loading-svg/loading-bars.svg'
 })
 Vue.config.productionTip = false
+Vue.prototype.$message = Message // 现在挂载到vue实例上就可以到处不引入直接使用了
 
 new Vue({
   store, // 挂载到vue实例上
