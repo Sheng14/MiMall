@@ -110,6 +110,48 @@
         <p>您确认要删除此地址吗？</p>
       </template>
     </modal>
+    <modal
+      title="新增确认"
+      btnType="1"
+      :showModal="showEditModal"
+      @cancel="showEditModal=false"
+      @submit="submitAddress"
+    >
+      <template v-slot:body>
+        <div class="edit-wrap">
+            <div class="item">
+                <input type="text" placeholder="姓名" class="input">
+                <input type="text" placeholder="手机号" class="input">
+            </div>
+            <div class="item">
+                <select name="province">
+                    <option value="艾泽拉斯">艾泽拉斯</option>
+                    <option value="天际省">天际省</option>
+                    <option value="佩里斯诺">佩里斯诺</option>
+                </select>
+                <select name="city">
+                    <option value="艾泽拉斯">破碎牙角</option>
+                    <option value="天际省">荣升堡垒</option>
+                    <option value="佩里斯诺">第三军团驻地</option>
+                </select>
+                <select name="district">
+                    <option value="天际省">无剑山庄</option>
+                    <option value="佩里斯诺">第三军团哨站</option>
+                    <option value="艾泽拉斯">旗兵部落</option>
+                    <option value="天际省">北地渔村</option>
+                    <option value="佩里斯诺">雇佣兵营地</option>
+                    <option value="艾泽拉斯">破碎海湾</option>
+                </select>
+            </div>
+            <div class="item">
+                <textarea name="streat"></textarea>
+            </div>
+            <div class="item">
+                <input type="text" class="input" placeholder="邮编">
+            </div>
+        </div>
+      </template>
+    </modal>
   </div>
 </template>
 <script>
@@ -129,6 +171,7 @@ export default {
             showDelModal: false, // 展示删除弹框与否
             checkedItem: {}, // 当前操作的地址对象
             userAction: '', // 用户行为（0新增 1编辑 2删除）
+            showEditModal: true // 显示编辑弹框与否
         }
     },
     methods: {
