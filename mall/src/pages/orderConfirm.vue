@@ -31,7 +31,7 @@
                 <div class="street">{{item.receiverProvince + ' ' + item.receiverCity + ' ' + item.receiverDistrict + ' ' + item.receiverAddress}}</div>
                 <div class="action">
                   <a href="javascript:;" class="fl">
-                    <svg class="icon icon-del">
+                    <svg class="icon icon-del" @click="delAddress(item)">
                       <use xlink:href="#icon-del"></use>
                     </svg>
                   </a>
@@ -99,18 +99,36 @@
         </div>
       </div>
     </div>
+    <modal
+      title="删除确认"
+      btnType="1"
+      :showModal="showDelModal"
+      @cancel="showDelModal=false"
+      @submit="submitAddress"
+    >
+      <template v-slot:body>
+        <p>您确认要删除此地址吗？</p>
+      </template>
+    </modal>
   </div>
 </template>
 <script>
+import Modal from '../components/Modal'
 import axios from 'axios'
 export default {
     name: 'orderConfirm',
+    components: {
+        Modal
+    },
     data () {
         return {
             list: [], //收货地址列表
             cartList: [], // 选中商品列表
             count: 0, // 选中商品总件数
-            cartTotalPrice:0,//商品总金额
+            cartTotalPrice:0,// 商品总金额
+            showDelModal: false, // 展示删除弹框与否
+            checkedItem: {}, // 当前操作的地址对象
+            userAction: '', // 用户行为（0新增 1编辑 2删除）
         }
     },
     methods: {
@@ -118,6 +136,36 @@ export default {
             axios.get('/shippings').then((res) => {
                 this.list = res.list
             })
+        },
+        submitAddress () { // 对地址进行新增、编辑、删除等操作
+            let { checkedItem, userAction } = this
+            let method
+            let url
+            if (userAction === 0) {
+                method = 'post',
+                url = '/shippings'
+            } else if (userAction === 1) {
+                method = 'put',
+                url = `/shippings/${checkedItem.id}`
+            } else {
+                method = 'delete',
+                url = `/shippings/${checkedItem.id}`
+            }
+            axios[method](url).then(() => {
+                this.closeModal()
+                this.getAddressList() // 操作完成依然需要重新获取一下最新的地址列表
+                this.$message.success('操作成功')
+            })
+        },
+        closeModal () { // 操作完地址后复原
+            this.showDelModal = false
+            this.userAction = ''
+            this.checkedItem = {}
+        },
+        delAddress (item) { // 删除地址（这里只是给出删除地址必要的信息）
+            this.showDelModal = true
+            this.checkedItem = item
+            this.userAction = 2
         },
         getCartList () { // 获取购物车商品数据
             axios.get('/carts').then((res) => {
