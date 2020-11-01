@@ -18,8 +18,10 @@ export default {
     }
   },
   mounted () {
-    this.getUser()
-    this.getCartCount()
+    if (this.$cookie.get('userId')) { // 有登录才调用这些接口，避免无意义调用（前提是我cookie的过期时间与后台的对话级别一致）
+        this.getUser()
+        this.getCartCount()
+    }
   },
   methods: { // 这里再派发一次事件，避免刷新后数据丢失
     getUser () {

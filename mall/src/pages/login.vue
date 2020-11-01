@@ -59,9 +59,14 @@ export default {
             .then((res) => {
               //  this.$store.dispatch('saveUsername', res.username)
                 this.saveUsername(res.username) // 两者都是派发事件
-                this.$cookie.set('userId', res.id, { expires: '1M' })
+                this.$cookie.set('userId', res.id, { expires: 'Session' })
                 this.userId = res.id
-                this.$router.push('/index')
+                this.$router.push({ // 设置跳转路由参数方便识别是从哪个页面来的
+                  name: 'index',
+                  params: {
+                    from: 'login'
+                  }
+                })
             })
         },
         ...mapActions(['saveUsername']),
