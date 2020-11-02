@@ -25,7 +25,9 @@
           <div class="item-address">
             <h2 class="addr-title">收货地址</h2>
             <div class="addr-list clearfix">
-              <div class="addr-info" v-for="(item,index) in list" :key="index">
+              <div class="addr-info" v-for="(item,index) in list" :key="index" 
+              :class="{'checked': index === checkedIndex}"
+              @click="checkedIndex = index">
                 <h2>{{item.receiverName}}</h2>
                 <div class="phone">{{item.receiverMobile}}</div>
                 <div class="street">{{item.receiverProvince + ' ' + item.receiverCity + ' ' + item.receiverDistrict + ' ' + item.receiverAddress}}</div>
@@ -36,7 +38,7 @@
                     </svg>
                   </a>
                   <a href="javascript:;" class="fr">
-                    <svg class="icon icon-edit">
+                    <svg class="icon icon-edit" @click="editAddressModal(item)">
                       <use xlink:href="#icon-edit"></use>
                     </svg>
                   </a>
@@ -94,7 +96,7 @@
           </div>
           <div class="btn-group">
             <a href="/#/cart" class="btn btn-default btn-large">返回购物车</a>
-            <a href="javascript:;" class="btn btn-large">去结算</a>
+            <a href="javascript:;" class="btn btn-large" @click="orderSubmit">去结算</a>
           </div>
         </div>
       </div>
@@ -171,7 +173,8 @@ export default {
             showDelModal: false, // 展示删除弹框与否
             checkedItem: {}, // 当前操作的地址对象
             userAction: '', // 用户行为（0新增 1编辑 2删除）
-            showEditModal: false // 显示编辑弹框与否
+            showEditModal: false, // 显示编辑弹框与否
+            checkedIndex: 0 // 选中地址的索引（默认是第一个）
         }
     },
     methods: {
@@ -180,9 +183,14 @@ export default {
                 this.list = res.list
             })
         },
-        openAddressModal () {
+        openAddressModal () { // 增加地址
           this.userAction = 0
-          this.checkedItem = {}
+          this.checkedItem = {} // 刚开始还没有添加，变量自然是空，在双向绑定里面慢慢填充
+          this.showEditModal = true
+        },
+        editAddressModal (item) { // 编辑地址
+          this.userAction = 1
+          this.checkedItem = item // 在已经有的基础上修改信息
           this.showEditModal = true
         },
         submitAddress () { // 对地址进行新增、编辑、删除等操作
@@ -257,6 +265,23 @@ export default {
                     this.count += item.quantity // 每一类商品都会有quantity代表买了多少件，通通加起来
                 })
             })
+        },
+        orderSubmit () { // 提交订单
+          let address = this.list[this.checkedIndex] // 先获取地址
+          if (!address) {
+            this.$message.error("请选择一个地址")
+            return
+          }
+          axios.post('/orders', {
+            shippingId: address.id // 发送请求传入地址id为参数
+          }).then((res) => {
+            this.$router.push({
+              path: '/order/pay',
+              query: {
+                orderNo: res.orderNo // 将订单号带过去
+              }
+            })
+          })
         }
     },
     mounted () {
