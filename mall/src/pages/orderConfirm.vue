@@ -43,7 +43,7 @@
                 </div>
               </div>
               <div class="addr-add">
-                <div class="icon-add"></div>
+                <div class="icon-add" @click="openAddressModal"></div>
                 <div>添加新地址</div>
               </div>
             </div>
@@ -120,21 +120,21 @@
       <template v-slot:body>
         <div class="edit-wrap">
             <div class="item">
-                <input type="text" placeholder="姓名" class="input">
-                <input type="text" placeholder="手机号" class="input">
+                <input type="text" placeholder="姓名" class="input" v-model="checkedItem.receiverName">
+                <input type="text" placeholder="手机号" class="input" v-model="checkedItem.receiverMobile">
             </div>
             <div class="item">
-                <select name="province">
+                <select name="province" v-model="checkedItem.receiverProvince">
                     <option value="艾泽拉斯">艾泽拉斯</option>
                     <option value="天际省">天际省</option>
                     <option value="佩里斯诺">佩里斯诺</option>
                 </select>
-                <select name="city">
+                <select name="city" v-model="checkedItem.receiverCity">
                     <option value="艾泽拉斯">破碎牙角</option>
                     <option value="天际省">荣升堡垒</option>
                     <option value="佩里斯诺">第三军团驻地</option>
                 </select>
-                <select name="district">
+                <select name="district" v-model="checkedItem.receiverDistrict">
                     <option value="天际省">无剑山庄</option>
                     <option value="佩里斯诺">第三军团哨站</option>
                     <option value="艾泽拉斯">旗兵部落</option>
@@ -144,10 +144,10 @@
                 </select>
             </div>
             <div class="item">
-                <textarea name="streat"></textarea>
+                <textarea name="streat" v-model="checkedItem.receiverAddress"></textarea>
             </div>
             <div class="item">
-                <input type="text" class="input" placeholder="邮编">
+                <input type="text" class="input" placeholder="邮编" v-model="checkedItem.receiverZip">
             </div>
         </div>
       </template>
@@ -171,7 +171,7 @@ export default {
             showDelModal: false, // 展示删除弹框与否
             checkedItem: {}, // 当前操作的地址对象
             userAction: '', // 用户行为（0新增 1编辑 2删除）
-            showEditModal: true // 显示编辑弹框与否
+            showEditModal: false // 显示编辑弹框与否
         }
     },
     methods: {
@@ -180,10 +180,16 @@ export default {
                 this.list = res.list
             })
         },
+        openAddressModal () {
+          this.userAction = 0
+          this.checkedItem = {}
+          this.showEditModal = true
+        },
         submitAddress () { // 对地址进行新增、编辑、删除等操作
             let { checkedItem, userAction } = this
             let method
             let url
+            let params = {} // 存储可能存在的参数
             if (userAction === 0) {
                 method = 'post',
                 url = '/shippings'
@@ -194,7 +200,38 @@ export default {
                 method = 'delete',
                 url = `/shippings/${checkedItem.id}`
             }
-            axios[method](url).then(() => {
+            if (userAction === 0 || userAction === 1) { // 如果是新增和编辑则单独校验参数和给参数对象赋值
+              let { receiverName, receiverMobile, receiverProvince, receiverCity, 
+              receiverDistrict, receiverAddress,receiverZip } = checkedItem // 直接解构的方式拿到（因为前面双向绑定就是往该对象里变量赋值）
+              let errmsg = ''
+              if (!receiverName) {
+                errmsg = "请输入正确的用户名"
+              } else if (!receiverMobile || !/\d{11}/.test(receiverMobile)) {
+                errmsg = "请输入正确格式的手机号"
+              } else if (!receiverProvince) {
+                errmsg = "请选中省份"
+              } else if (!receiverCity) {
+                errmsg = "请选择城市"
+              } else if (!receiverDistrict || !receiverAddress) {
+                errmsg = "请输入收货地址"
+              } else if (!/\d{6}/.test(receiverZip)) {
+                errmsg = "请输入六位的邮编"
+              }
+              if (errmsg) { // 如果有上述错误弹出提示框且返回
+                this.$message.error(errmsg)
+                return
+              }
+              params = { // 指定参数
+                receiverName,
+                receiverMobile,
+                receiverProvince,
+                receiverCity,
+                receiverDistrict,
+                receiverAddress,
+                receiverZip
+              }
+            }
+            axios[method](url,params).then(() => {
                 this.closeModal()
                 this.getAddressList() // 操作完成依然需要重新获取一下最新的地址列表
                 this.$message.success('操作成功')
@@ -204,6 +241,7 @@ export default {
             this.showDelModal = false
             this.userAction = ''
             this.checkedItem = {}
+            this.showEditModal = false
         },
         delAddress (item) { // 删除地址（这里只是给出删除地址必要的信息）
             this.showDelModal = true
