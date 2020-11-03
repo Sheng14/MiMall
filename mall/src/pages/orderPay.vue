@@ -44,8 +44,8 @@
           <h3>选择以下支付方式付款</h3>
           <div class="pay-way">
             <p>支付平台</p>
-            <div class="pay pay-ali"></div>
-            <div class="pay pay-wechat"></div>
+            <div class="pay pay-ali" :class="{'checked': payType === 1}"  @click="paySubmit(1)"></div>
+            <div class="pay pay-wechat" :class="{'chceked': payType === 2}" @click="paySubmit(2)"></div>
           </div>
         </div>
       </div>
@@ -61,7 +61,8 @@ export default {
             orderNo: this.$route.query.orderNo, // 订单号
             addressInfo: '', // 收货人地址
             orderDetail: '', // 订单详情（包含商品列表）
-            showDetail: false // 控制商品详情显示与否
+            showDetail: false, // 控制商品详情显示与否
+            payType: '' // 支付状态
         }
     },
     methods: {
@@ -72,6 +73,12 @@ export default {
                  ${shippingVo.receiverCity} ${shippingVo.receiverDistrict} ${shippingVo.receiverAddress}`
                 this.orderDetail = res.orderItemVoList // 商品详情
             })
+        },
+        paySubmit(payType) { // 提交支付
+            this.payType = payType
+            if (payType === 1) { // 如果是支付宝的话打开新窗口（需要先跳到alipay组件过渡等待一下再到支付宝支付页面）
+                window.open('/#/order/alipay?orderId=' + this.orderNo, '_blank') // 需要加#哈希路由，否则跳到首页，记得新窗口打开
+            }
         }
     },
     mounted () {
