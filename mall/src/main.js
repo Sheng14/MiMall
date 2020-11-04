@@ -38,8 +38,10 @@ axios.interceptors.response.use(function(response){
     Message.error(res.msg) // 引入使用方式
     return Promise.reject(res) // 抛出错误，不然会走我们后面成功的方法
   }
-},(error) => {
-  this.$message.error(error) // 第一个参数拦截接口错误（200之后才会执行），第二个参数拦截服务器500错误
+},(error) => { // 第一个参数拦截接口错误（200之后才会执行），第二个参数拦截服务器500错误
+  let res = error.response;
+  Message.error(res.data.message);
+  return Promise.reject(error); // 需要返回否则会进入正确的then逻辑
 })
 
 Vue.use(axios, VueAxios)
