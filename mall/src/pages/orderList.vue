@@ -8,6 +8,7 @@
     <div class="wrapper">
       <div class="container">
         <div class="order-box">
+        <loading v-if="loading"></loading>
           <div class="order" v-for="(order,index) in list" :key="index">
             <div class="order-title">
               <div class="item-info fl">
@@ -45,6 +46,7 @@
               </div>
             </div>
           </div>
+          <no-data v-if="!loading && list.length === 0"></no-data>
         </div>
       </div>
     </div>
@@ -52,24 +54,35 @@
 </template>
 <script>
 import OrderHeader from './../components/OrderHeader'
+import Loading from './../components/Loading'
+import NoData from './../components/NoData'
 import axios from 'axios'
 export default {
     name: 'orderList',
     components: {
-        OrderHeader
+        OrderHeader,
+        Loading,
+        NoData
     },
     data () {
         return {
-            list: [] // 商品列表
+            list: [], // 商品列表
+            loading: true // 显示等待数据图标与否
         }
     },
     mounted() {
         this.getOrderList()
     },
     methods: {
-        getOrderList () { // 获取商品列表
-            axios.get('/orders').then((res) => {
+        getOrderList () { // 获取商品列表,展示加载动画
+            axios.get('/orders')
+            .then((res) => {
+              //  this.list = [] || res.list
                 this.list = res.list
+                this.loading = false // 如果我请求回来了则关闭加载动画
+            })
+            .catch(() => {
+                this.loading = false // 请求失败我也关掉
             })
         },
         goPay(orderNo) { // 前往支付页面（带上订单号）
