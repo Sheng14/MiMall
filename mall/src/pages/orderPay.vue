@@ -50,10 +50,14 @@
         </div>
       </div>
     </div>
+    <scan-pay-code v-if="showPay" @close="closePayModal" :img="payImg"></scan-pay-code>
   </div>
 </template>
 <script>
 import axios from 'axios'
+import QRCode from 'qrcode'
+import ScanPayCode from './../components/ScanPayCode'
+
 export default {
     name: 'orderPay',
     data () {
@@ -62,8 +66,13 @@ export default {
             addressInfo: '', // 收货人地址
             orderDetail: '', // 订单详情（包含商品列表）
             showDetail: false, // 控制商品详情显示与否
-            payType: '' // 支付状态
+            payType: '', // 支付状态
+            payImg: '', // 支付二维码图片
+            showPay: false // 二维码显示与否
         }
+    },
+    components: {
+      ScanPayCode
     },
     methods: {
         getOrderDetail () { // 获取订单详情
@@ -78,7 +87,26 @@ export default {
             this.payType = payType
             if (payType === 1) { // 如果是支付宝的话打开新窗口（需要先跳到alipay组件过渡等待一下再到支付宝支付页面）
                 window.open('/#/order/alipay?orderId=' + this.orderNo, '_blank') // 需要加#哈希路由，否则跳到首页，记得新窗口打开
+            } else { // 如果是支付宝接口就拿到返回对应的微信协议
+               axios.post('/pay', {
+                orderId: this.orderNo,
+                orderName: '武侯',
+                amount: 0.01, // 金额
+                payType: 2 // 代表支付状态
+                }).
+                then((res) => { // 将微信协议转码成二维码，然后展示二维码弹窗，赋值二维码图片
+                  QRCode.toDataURL(res.content).then((res) => {
+                    this.showPay = true
+                    this.payImg = res
+                })
+                .catch(() => {
+                  this.$message.error('微信二维码获取失败，请稍后尝试')
+                })
+              })
             }
+        },
+        closePayModal () { // 关闭弹窗
+          this.showPay = false
         }
     },
     mounted () {
