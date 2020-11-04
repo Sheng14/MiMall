@@ -11,7 +11,7 @@
               <p>收货信息：{{addressInfo}}</p>
             </div>
             <div class="order-total">
-              <p>应付总额：<span>10</span>元</p>
+              <p>应付总额：<span>{{payment}}</span>元</p>
               <p>订单详情<em class="icon-down" :class="{'up':showDetail}" @click="showDetail=!showDetail"></em></p>
             </div>
           </div>
@@ -51,11 +51,25 @@
       </div>
     </div>
     <scan-pay-code v-if="showPay" @close="closePayModal" :img="payImg"></scan-pay-code>
+    <modal
+      title="支付确认"
+      btnType="3"
+      :showModal="showPayModal"
+      sureText="查看订单"
+      cancelText="未支付"
+      @cancel="showPayModal=false"
+      @submit="goOrderList"
+    >
+      <template v-slot:body>
+        <p>您确认是否完成支付？</p>
+      </template>
+    </modal>
   </div>
 </template>
 <script>
 import axios from 'axios'
 import QRCode from 'qrcode'
+import Modal from '../components/Modal'
 import ScanPayCode from './../components/ScanPayCode'
 
 export default {
@@ -68,11 +82,15 @@ export default {
             showDetail: false, // 控制商品详情显示与否
             payType: '', // 支付状态
             payImg: '', // 支付二维码图片
-            showPay: false // 二维码显示与否
+            showPay: false, // 二维码显示与否
+            showPayModal: false, // 展示二次支付确认与否
+            payment: 0, // 订单总金额
+            T: '', //定时器
         }
     },
     components: {
-      ScanPayCode
+      ScanPayCode,
+      Modal
     },
     methods: {
         getOrderDetail () { // 获取订单详情
@@ -81,6 +99,7 @@ export default {
                 this.addressInfo = `${shippingVo.receiverName} ${shippingVo.receiverMobile} ${shippingVo.receiverProvince}
                  ${shippingVo.receiverCity} ${shippingVo.receiverDistrict} ${shippingVo.receiverAddress}`
                 this.orderDetail = res.orderItemVoList // 商品详情
+                this.payment = res.payment // 商品总金额
             })
         },
         paySubmit(payType) { // 提交支付
@@ -94,10 +113,11 @@ export default {
                 amount: 0.01, // 金额
                 payType: 2 // 代表支付状态
                 }).
-                then((res) => { // 将微信协议转码成二维码，然后展示二维码弹窗，赋值二维码图片
+                then((res) => { // 将微信协议转码成二维码，然后展示二维码弹窗，赋值二维码图片，开始轮询查看订单状态
                   QRCode.toDataURL(res.content).then((res) => {
                     this.showPay = true
                     this.payImg = res
+                    this.loopOrderState()
                 })
                 .catch(() => {
                   this.$message.error('微信二维码获取失败，请稍后尝试')
@@ -105,8 +125,23 @@ export default {
               })
             }
         },
-        closePayModal () { // 关闭弹窗
+        closePayModal () { // 关闭二维码弹窗展示二次支付弹窗且清除轮询（已经支付但是网络原因没有跳转或者放弃支付的情况，再轮询也没用直接让用户选）
           this.showPay = false
+          this.showPayModal = true
+          clearInterval(this.T)
+        },
+        loopOrderState () { // 对订单状态进行轮询
+          this.T = setInterval(() => {
+            axios.get(`/orders/${this.orderNo}`).then((res) => {
+              if (res.status === 20) { // 定义一个定时器不断轮询，如果支付完成则关闭轮询且跳转到订单列表页（支付完成的情况）
+                this.goOrderList()
+                clearInterval(this.T)
+              }
+            })
+          }, 1000); 
+        },
+        goOrderList () { // 跳转到订单列表页
+          this.$router.push('/order/list')
         }
     },
     mounted () {
