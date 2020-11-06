@@ -46,6 +46,18 @@
               </div>
             </div>
           </div>
+          <div class="load-more">
+            <el-button type="primary" :loading="loading" @click="loadMore">加载更多</el-button>
+          </div>
+          <el-pagination
+            v-if="false"
+            background
+            class="pagination"
+            layout="prev, pager, next"
+            :pageSize="pageSize"
+            :total="total"
+            @current-change="handleChange"
+          ></el-pagination>
           <no-data v-if="!loading && list.length === 0"></no-data>
         </div>
       </div>
@@ -56,18 +68,24 @@
 import OrderHeader from './../components/OrderHeader'
 import Loading from './../components/Loading'
 import NoData from './../components/NoData'
+import { Pagination, Button } from 'element-ui'
 import axios from 'axios'
 export default {
     name: 'orderList',
     components: {
         OrderHeader,
         Loading,
-        NoData
+        NoData,
+        [Pagination.name]: Pagination,
+        [Button.name]: Button
     },
     data () {
         return {
             list: [], // 商品列表
-            loading: true // 显示等待数据图标与否
+            loading: false ,// 显示等待数据图标与否（包括按钮的等待效果）
+            total: 0, //总共多少条数据
+            pageSize: 2, // 每页加载多少条数据（写死默认是10）
+            pageNum: 1 // 当前是第几页
         }
     },
     mounted() {
@@ -75,11 +93,18 @@ export default {
     },
     methods: {
         getOrderList () { // 获取商品列表,展示加载动画
-            axios.get('/orders')
+            this.loading = true
+            axios.get('/orders', {
+              params: {
+                pageNum: this.pageNum, // 控制当前页是哪一页
+                pageSize: this.pageSize // 控制每页加载的数据
+              }
+            })
             .then((res) => {
               //  this.list = [] || res.list
-                this.list = res.list
+                this.list = this.list.concat(res.list) // 合并之前查询的数据，不需要之前的数据可以是去掉concat
                 this.loading = false // 如果我请求回来了则关闭加载动画
+                this.total = res.total // 拿到一共有多少条数据
             })
             .catch(() => {
                 this.loading = false // 请求失败我也关掉
@@ -100,6 +125,14 @@ export default {
                     orderNo
                 }
             })
+        },
+        handleChange (pageNum) { // 当前页改变的时候触发（点击页码和箭头），修改当前页重新请求当前页数据
+          this.pageNum = pageNum
+          this.getOrderList()
+        },
+        loadMore () { // 加载更多
+          this.pageNum++ // 页数加一页再请求一次数据就可以拿到下一页的数据
+          this.getOrderList()
         }
     }
 }
@@ -165,6 +198,19 @@ export default {
               }
             }
           }
+        }
+        .pagination{
+          text-align:right;
+        }
+        .el-pagination.is-background .el-pager li:not(.disabled).active{
+          background-color: #FF6600;
+        }
+        .el-button--primary{
+          background-color: #FF6600;
+          border-color: #FF6600;
+        }
+        .load-more,.scroll-more{
+          text-align:center;
         }
       }
     }
