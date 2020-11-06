@@ -46,18 +46,19 @@
               </div>
             </div>
           </div>
-          <div class="load-more">
+          <div class="load-more" v-if="false">
             <el-button type="primary" :loading="loading" @click="loadMore" v-if="showNextPage">加载更多</el-button>
           </div>
           <div class="scroll-more"
             v-infinite-scroll="scrollMore"
             infinite-scroll-disabled="busy"
             infinite-scroll-distance="300"
+            v-if="false"
           >
             <img src="/imgs/loading-svg/loading-spinning-bubbles.svg" alt="" v-show="loading">
           </div>
           <el-pagination
-            v-if="false"
+            v-if="true"
             background
             class="pagination"
             layout="prev, pager, next"
@@ -116,7 +117,8 @@ export default {
             })
             .then((res) => {
               //  this.list = [] || res.list
-                this.list = this.list.concat(res.list) // 合并之前查询的数据，不需要之前的数据可以是去掉concat
+              //  this.list = this.list.concat(res.list) // 合并之前查询的数据，不需要之前的数据可以是去掉concat
+                this.list = res.list
                 this.loading = false // 如果我请求回来了则关闭加载动画
                 this.total = res.total // 拿到一共有多少条数据
                 this.busy = false // 在首次加载完毕才释放滚动
