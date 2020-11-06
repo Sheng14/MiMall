@@ -12,5 +12,8 @@ module.exports = {
             }
         }
     },
-    productionSourceMap: false
+    productionSourceMap: false,
+    chainWebpack:(config)=>{
+        config.plugins.delete('prefetch');
+    }
 }
