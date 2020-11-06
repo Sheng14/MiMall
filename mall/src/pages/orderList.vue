@@ -47,7 +47,14 @@
             </div>
           </div>
           <div class="load-more">
-            <el-button type="primary" :loading="loading" @click="loadMore">加载更多</el-button>
+            <el-button type="primary" :loading="loading" @click="loadMore" v-if="showNextPage">加载更多</el-button>
+          </div>
+          <div class="scroll-more"
+            v-infinite-scroll="scrollMore"
+            infinite-scroll-disabled="busy"
+            infinite-scroll-distance="300"
+          >
+            <img src="/imgs/loading-svg/loading-spinning-bubbles.svg" alt="" v-show="loading">
           </div>
           <el-pagination
             v-if="false"
@@ -69,6 +76,7 @@ import OrderHeader from './../components/OrderHeader'
 import Loading from './../components/Loading'
 import NoData from './../components/NoData'
 import { Pagination, Button } from 'element-ui'
+import infiniteScroll from 'vue-infinite-scroll'
 import axios from 'axios'
 export default {
     name: 'orderList',
@@ -79,13 +87,18 @@ export default {
         [Pagination.name]: Pagination,
         [Button.name]: Button
     },
+    directives: {
+      infiniteScroll
+    },
     data () {
         return {
             list: [], // 商品列表
             loading: false ,// 显示等待数据图标与否（包括按钮的等待效果）
             total: 0, //总共多少条数据
             pageSize: 2, // 每页加载多少条数据（写死默认是10）
-            pageNum: 1 // 当前是第几页
+            pageNum: 1, // 当前是第几页
+            showNextPage: true, // 是否显示加载更多的按钮
+            busy: false // 是否繁忙（繁忙则不允许滚动）
         }
     },
     mounted() {
@@ -93,6 +106,7 @@ export default {
     },
     methods: {
         getOrderList () { // 获取商品列表,展示加载动画
+            this.busy = true // 一开始就不允许滚动，不然会触发滚动事件
             this.loading = true
             axios.get('/orders', {
               params: {
@@ -105,6 +119,8 @@ export default {
                 this.list = this.list.concat(res.list) // 合并之前查询的数据，不需要之前的数据可以是去掉concat
                 this.loading = false // 如果我请求回来了则关闭加载动画
                 this.total = res.total // 拿到一共有多少条数据
+                this.busy = false // 在首次加载完毕才释放滚动
+                this.showNextPage = res.hasNextPage
             })
             .catch(() => {
                 this.loading = false // 请求失败我也关掉
@@ -133,7 +149,33 @@ export default {
         loadMore () { // 加载更多
           this.pageNum++ // 页数加一页再请求一次数据就可以拿到下一页的数据
           this.getOrderList()
-        }
+        },
+        scrollMore () { // 滚动事件，禁用滚动，调用对应接口获取下一页的数据，500ms后才继续滚动
+          this.busy = true
+          setTimeout(() => {
+            this.pageNum++
+            this.getList()
+          },500)
+        },
+        // 专门给scrollMore使用
+        getList(){
+          this.loading = true;
+          axios.get('/orders',{
+            params:{
+              pageSize:2,
+              pageNum:this.pageNum
+            }
+          }).then((res)=>{
+            this.list = this.list.concat(res.list);
+            this.loading = false;
+            if(res.hasNextPage){ // 判断是不是最后一页决定是否禁用滚动
+              this.busy=false;
+            }else{
+              this.busy=true;
+            }
+            this.showNextPage = res.hasNextPage
+          });
+        }       
     }
 }
 </script>
